@@ -15,16 +15,6 @@ Stopwatch balapan modern untuk kompetisi robotika, line follower, atau perlombaa
 * **p** : Mute / Unmute Background Music (BGM).
 * **F11** : Masuk / Keluar mode Fullscreen.
 
-## Kustomisasi Suara (Opsional)
-Jika ingin menambahkan audio sendiri, buat folder `assets/sound/` lalu masukkan file dengan nama berikut:
-- `main-theme.mp3` : Musik latar (BGM) saat balapan berjalan
-- `prepare.mp3` : Efek hitung mundur persiapan
-- `start.mp3` : Efek suara mulai / peluit
-- `smb_1-up.wav` : Efek suara checkpoint / lap tim
-- `applause.mp3` : Efek suara saat tim berhasil finish
-- `smb_stage_clear.wav` : Efek suara balapan selesai
-- `times_up.mp3` : Efek suara waktu balapan habis
-
 ## Developer & Credits
 * [WannnXVZ](https://github.com/WannnXVZ)
 * [Akbarco](https://github.com/Akbarco)

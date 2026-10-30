@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title id="title">Race Stopwatch</title>
+	<link rel="icon" type="image/svg+xml"
+		href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='13' r='8' fill='%230f172a' stroke='%2338bdf8' stroke-width='2'/%3E%3Cpath d='M12 9v4l2.5 1.5' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M10 2h4M12 2v3' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="assets/css/font-awesome/css/font-awesome.min.css" />
+</head>
+
+<body>
+	<!-- Audio Elements (Masukkan file audio ke folder assets/sound/ jika ingin menambahkan suara nanti) -->
+	<audio src="-" id="mainThemeAudio" preload="none"></audio>
+	<audio src="-" id="applauseAudio" preload="none"></audio>
+	<audio src="-" id="prepare" preload="none"></audio>
+	<audio src="-" id="raceEndAudio" preload="none"></audio>
+	<audio src="-" id="checkpointSound" preload="none"></audio>
+	<audio src="-" id="start" preload="none"></audio>
+	<audio src="-" id="timesUpAudio" preload="none"></audio>
+
+	<!-- Background Layer Containers (maintained for transition compatibility) -->
+	<div class="bg-image1" id="bg-image1"></div>
+	<div class="bg-image2" id="bg-image2"></div>
+	<div class="bg-image4" id="bg-image4"></div>
+
+	<!-- Top Navigation Navbar -->
+	<header class="app-navbar">
+		<div class="nav-brand">
+			<span class="brand-title" id="headerTitle">Race Stopwatch</span>
+		</div>
+
+		<nav class="nav-actions">
+			<button id="nav-stopwatch" class="nav-tab-btn active" onclick="routeToPage('stopWatch')">
+				<i class="fa fa-clock-o"></i> <span>Timer</span>
+			</button>
+			<button id="nav-setting" class="nav-tab-btn" onclick="routeToPage('settings')">
+				<i class="fa fa-sliders"></i> <span>Setting</span>
+			</button>
+			<button id="nav-informationPage" class="nav-tab-btn" onclick="routeToPage('informationPage')">
+				<i class="fa fa-info-circle"></i> <span>Info</span>
+			</button>
+			<button class="nav-tab-btn" onclick="toggleFullScreen()" title="Toggle Fullscreen">
+				<i class="fa fa-arrows-alt"></i>
+			</button>
+		</nav>
+	</header>
+
+	<!-- STOPWATCH PAGE -->
+	<main id="StopWatchPage" class="container">
+		<div id="mode" class="mode-pill mode-prep">PREPARATION TIME</div>
+
+		<!-- Hero Timer Display -->
+		<div id="pagar" class="timer-hero">
+			<div id="disp">00:00</div>
+			<div class="ms" id="dispMs">.00</div>
+		</div>
+
+		<!-- Quick Action Controls Dock -->
+		<div class="controls-container">
+			<button id="btnPlayPause" class="btn-ctrl btn-primary" onclick="triggerPlayPause()">
+				<i class="fa fa-play"></i> <span id="playPauseText">Start</span> <kbd>Space</kbd>
+			</button>
+			<button id="btnReset" class="btn-ctrl" onclick="triggerReset()">
+				<i class="fa fa-undo"></i> <span>Reset</span> <kbd>R</kbd>
+			</button>
+			<button id="sfxToggleBtn" class="btn-ctrl" onclick="triggerToggleSfx()">
+				<i class="fa fa-volume-up"></i> <span>SFX: ON</span> <kbd>O</kbd>
+			</button>
+			<button id="bgmToggleBtn" class="btn-ctrl" onclick="triggerToggleBgm()">
+				<i class="fa fa-music"></i> <span>BGM: ON</span> <kbd>P</kbd>
+			</button>
+		</div>
+
+		<!-- Unified Matchup Card -->
+		<div class="matchup-card">
+			<!-- Matchup Header: Team A on Left, Match Info in Center, Team B on Right -->
+			<div class="matchup-header">
+				<div class="team-header team-header-a">
+					<span class="team-badge badge-a">TEAM A</span>
+					<h2 id="team_a_name" class="team-name blue-colored">Tim A</h2>
+				</div>
+
+				<div class="match-info-center">
+					<div id="midText" class="match-vs-badge">VS / LAPS</div>
+				</div>
+
+				<div class="team-header team-header-b">
+					<span class="team-badge badge-b">TEAM B</span>
+					<h2 id="team_b_name" class="team-name red-colored">Tim B</h2>
+				</div>
+			</div>
+
+			<!-- Laps Grid: Perfect row-by-row horizontal alignment -->
+			<div class="laps-grid">
+				<div id="aTimeLap" class="time-lap time-lap-a"></div>
+				<div id="midLapNo" class="laps-no"></div>
+				<div id="bTimeLap" class="time-lap time-lap-b"></div>
+			</div>
+
+			<!-- Matchup Actions / Lap Buttons -->
+			<div class="matchup-actions">
+				<button class="btn-lap btn-lap-a" onclick="triggerLapA()">
+					<i class="fa fa-flag-checkered"></i> <span id="btnLapAText">LAP A</span> <kbd>A</kbd>
+				</button>
+				<div class="actions-spacer"></div>
+				<button class="btn-lap btn-lap-b" onclick="triggerLapB()">
+					<i class="fa fa-flag-checkered"></i> <span id="btnLapBText">LAP B</span> <kbd>B</kbd>
+				</button>
+			</div>
+		</div>
+
+		<!-- Watermark Footer -->
+		<footer class="watermark-footer">
+			<span class="watermark-text">Developed by</span>
+			<a href="https://github.com/WannnXVZ" target="_blank" rel="noopener noreferrer" class="watermark-link">
+				<i class="fa fa-github"></i> WannnXVZ
+			</a>
+			<span class="watermark-dot">&bull;</span>
+			<a href="https://github.com/Akbarco" target="_blank" rel="noopener noreferrer" class="watermark-link">
+				<i class="fa fa-github"></i> Akbarco
+			</a>
+		</footer>
+	</main>
+
+	<!-- SETTINGS PAGE -->
+	<section id="settingPage" class="container">
+		<div class="settings-card">
+			<h2 class="card-title"><i class="fa fa-sliders"></i> Pengaturan Perlombaan</h2>
+
+			<div class="settings-grid">
+				<div class="form-group col-span-2">
+					<label for="compNameInput">Nama Kompetisi</label>
+					<input class="form-input" type="text" id="compNameInput"
+						placeholder="Contoh: Robot Line Follower Race 2026">
+				</div>
+
+				<div class="form-group">
+					<label for="prep_time">Durasi Persiapan (detik)</label>
+					<input class="form-input" type="number" id="prep_time" placeholder="5">
+				</div>
+
+				<div class="form-group">
+					<label for="race_duration">Durasi Balapan (detik)</label>
+					<input class="form-input" type="number" id="race_duration" placeholder="15">
+				</div>
+
+				<div class="form-group">
+					<label for="a_team_input">Nama Tim A</label>
+					<input class="form-input" type="text" id="a_team_input" placeholder="Tim A">
+				</div>
+
+				<div class="form-group">
+					<label for="b_team_input">Nama Tim B</label>
+					<input class="form-input" type="text" id="b_team_input" placeholder="Tim B">
+				</div>
+
+				<div class="form-group">
+					<label for="lap_a_input">Label Lap A</label>
+					<input class="form-input" type="text" id="lap_a_input" placeholder="LAP A">
+				</div>
+
+				<div class="form-group">
+					<label for="lap_b_input">Label Lap B</label>
+					<input class="form-input" type="text" id="lap_b_input" placeholder="LAP B">
+				</div>
+
+				<div class="form-group">
+					<label for="nLapInput">Jumlah Lap</label>
+					<input class="form-input" type="number" min="1" id="nLapInput" placeholder="3">
+				</div>
+
+				<div class="form-group">
+					<label for="midTextInput">Teks Tengah</label>
+					<input class="form-input" type="text" id="midTextInput" placeholder="VS / Laps">
+				</div>
+
+				<div class="settings-actions">
+					<button class="btn-reset-default"
+						onclick="localStorage.setItem('krc_timer_setting', JSON.stringify(defaultSetting)); window.location.reload();">
+						<i class="fa fa-refresh"></i> Reset Default
+					</button>
+					<button class="btn-save-settings" onclick="setSettings()">
+						<i class="fa fa-check"></i> Simpan Pengaturan
+					</button>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- INFORMATION & HOTKEYS PAGE -->
+	<section id="informationPage" class="container">
+		<div class="info-card">
+			<h2 class="card-title"><i class="fa fa-keyboard-o"></i> Panduan Tombol (Hotkeys)</h2>
+
+			<table class="hotkeys-table">
+				<tbody>
+					<tr>
+						<td>1.</td>
+						<td><kbd>Space</kbd></td>
+						<td>Mulai / Pause Stopwatch</td>
+					</tr>
+					<tr>
+						<td>2.</td>
+						<td><kbd>R</kbd></td>
+						<td>Reset Stopwatch (saat timer dalam kondisi pause)</td>
+					</tr>
+					<tr>
+						<td>3.</td>
+						<td><kbd>A</kbd></td>
+						<td>Catat Waktu Lap Tim A</td>
+					</tr>
+					<tr>
+						<td>4.</td>
+						<td><kbd>B</kbd></td>
+						<td>Catat Waktu Lap Tim B</td>
+					</tr>
+					<tr>
+						<td>5.</td>
+						<td><kbd>O</kbd></td>
+						<td>Mute / Unmute Sound FX (Efek Suara)</td>
+					</tr>
+					<tr>
+						<td>6.</td>
+						<td><kbd>P</kbd></td>
+						<td>Mute / Unmute Background Music (BGM)</td>
+					</tr>
+					<tr>
+						<td>7.</td>
+						<td><kbd>F11</kbd></td>
+						<td>Fullscreen / Keluar Fullscreen</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="info-credits">
+				<strong>Race Stopwatch</strong>
+				<p class="credits-label">Developers / Credits:</p>
+				<div class="credits-authors">
+					<a href="https://github.com/WannnXVZ" target="_blank" rel="noopener noreferrer" class="credit-link">
+						<i class="fa fa-github"></i> <span>WannnXVZ</span>
+					</a>
+					<span class="credits-divider">&bull;</span>
+					<a href="https://github.com/Akbarco" target="_blank" rel="noopener noreferrer" class="credit-link">
+						<i class="fa fa-github"></i> <span>Akbarco</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="assets/js/settingStorage.js"></script>
+	<script src="assets/js/pageTransition.js"></script>
+	<script src="assets/js/stopwatch.js"></script>
+	<script>
+		toDisplayHtml(msToArrTime(prepDuration));
+		routeToPage('stopWatch');
+		printAllLaps();
+		updateAudioButtons();
+		syncTimerUI();
+	</script>
+</body>
+
+</html>
